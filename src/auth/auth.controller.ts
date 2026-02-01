@@ -6,13 +6,24 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  Get,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from './decorators/get-user.decorator';
+import { User } from './entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('check-token')
+  @UseGuards(AuthGuard())
+  checkToken(@GetUser() user: User) {
+    return this.authService.checkToken(user);
+  }
 
   @Post('login')
   login(@Body() loginUserDto: LoginUserDto) {

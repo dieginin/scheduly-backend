@@ -10,12 +10,15 @@ import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 import { compareSync, hashSync } from 'bcrypt';
 import { User } from './entities/user.entity';
 import { isEmail } from 'class-validator';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   private async checkUserExistence(email: string, username: string) {
@@ -33,6 +36,14 @@ export class AuthService {
     return user;
   }
 
+  private getJwt(payload: JwtPayload) {
+    return this.jwtService.sign(payload);
+  }
+
+  checkToken(user: User) {
+    return { ...user, token: this.getJwt({ id: user.id }) };
+  }
+
   async login(loginUserDto: LoginUserDto) {
     const { identifier, password } = loginUserDto;
 
@@ -47,7 +58,7 @@ export class AuthService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword; // TODO add token
+    return { ...userWithoutPassword, token: this.getJwt({ id: user.id }) };
   }
 
   async register(registerUserDto: RegisterUserDto) {
@@ -63,7 +74,7 @@ export class AuthService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword; // TODO add token
+    return { ...userWithoutPassword, token: this.getJwt({ id: user.id }) };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
