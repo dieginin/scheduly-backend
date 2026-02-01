@@ -7,7 +7,7 @@ export class Shift {
   id: string;
 
   @Column('date', { nullable: true })
-  end?: Date;
+  endDate?: Date;
 
   @Column('date', { nullable: true })
   lunchEnd?: Date;
@@ -16,7 +16,7 @@ export class Shift {
   lunchStart?: Date;
 
   @Column('date')
-  start: Date;
+  startDate: Date;
 
   @ManyToOne(() => Report, (report) => report.shifts, { onDelete: 'CASCADE' })
   report: Report;
