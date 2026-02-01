@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 
@@ -17,17 +25,20 @@ export class AuthController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.authService.update(+id, updateUserDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.authService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  deactivate(@Param('id') id: string) {
-    return this.authService.deactivate(+id);
+  deactivate(@Param('id', ParseUUIDPipe) id: string) {
+    return this.authService.deactivate(id);
   }
 
   @Post(':id')
-  reactivate(@Param('id') id: string) {
-    return this.authService.reactivate(+id);
+  reactivate(@Param('id', ParseUUIDPipe) id: string) {
+    return this.authService.reactivate(id);
   }
 }
