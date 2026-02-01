@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from '../common/decorators';
 import { AuthService } from './auth.service';
-import { GetUser } from './decorators/get-user.decorator';
 import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 import { User } from './entities/user.entity';
 

@@ -1,7 +1,8 @@
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 import { ReportsModule } from './reports/reports.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { ReportsModule } from './reports/reports.module';
       username: process.env.DB_USERNAME,
     }),
     AuthModule,
+    CommonModule,
     ReportsModule,
   ],
 })
