@@ -55,6 +55,7 @@ export class AuthService {
 
     if (!user || !compareSync(password, user.password))
       throw new UnauthorizedException('Invalid credentials');
+    if (!user.isActive) throw new UnauthorizedException('User is inactive');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
