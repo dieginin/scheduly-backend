@@ -1,9 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
-import { hashSync } from 'bcrypt';
-import { ConflictException, Injectable } from '@nestjs/common';
+import { compareSync, hashSync } from 'bcrypt';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from './entities/user.entity';
+import { isEmail } from 'class-validator';
 
 @Injectable()
 export class AuthService {
@@ -21,8 +26,21 @@ export class AuthService {
       throw new ConflictException('An user with this username already exists');
   }
 
-  login(loginUserDto: LoginUserDto) {
-    return loginUserDto;
+  async login(loginUserDto: LoginUserDto) {
+    const { identifier, password } = loginUserDto;
+
+    const field = isEmail(identifier) ? 'email' : 'username';
+    const user = await this.usersRepository.findOne({
+      where: { [field]: identifier.toLowerCase() },
+      select: { id: true, username: true, email: true, password: true },
+    });
+
+    if (!user || !compareSync(password, user.password))
+      throw new UnauthorizedException('Invalid credentials');
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword; // TODO add token
   }
 
   async register(registerUserDto: RegisterUserDto) {
@@ -38,7 +56,7 @@ export class AuthService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return userWithoutPassword; // TODO add token
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
