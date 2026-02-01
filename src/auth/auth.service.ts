@@ -4,13 +4,13 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { compareSync, hashSync } from 'bcrypt';
+import { isEmail } from 'class-validator';
 import { Repository } from 'typeorm';
 import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
-import { compareSync, hashSync } from 'bcrypt';
 import { User } from './entities/user.entity';
-import { isEmail } from 'class-validator';
-import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()

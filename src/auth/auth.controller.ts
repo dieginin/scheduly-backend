@@ -1,18 +1,18 @@
 import {
-  Controller,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  ParseUUIDPipe,
   Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AuthService } from './auth.service';
 import { GetUser } from './decorators/get-user.decorator';
+import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
 import { User } from './entities/user.entity';
 
 @Controller('auth')
