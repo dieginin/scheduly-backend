@@ -5,6 +5,7 @@ import { compareSync, hashSync } from 'bcrypt';
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
@@ -24,6 +25,12 @@ export class AuthService {
       await this.usersRepository.findOneBy({ username: username.toLowerCase() })
     )
       throw new ConflictException('An user with this username already exists');
+  }
+
+  private async updateUser<T>(id: string, updateData: T) {
+    const user = await this.usersRepository.preload({ id, ...updateData });
+    if (!user) throw new NotFoundException(`Not user found with ID ${id}`);
+    return user;
   }
 
   async login(loginUserDto: LoginUserDto) {
@@ -59,8 +66,14 @@ export class AuthService {
     return userWithoutPassword; // TODO add token
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return { id, updateUserDto };
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const { email, username } = updateUserDto;
+    await this.checkUserExistence(email || '', username || '');
+
+    const user = await this.updateUser(id, updateUserDto);
+
+    await this.usersRepository.save(user);
+    return user;
   }
 
   deactivate(id: string) {
