@@ -12,7 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       host: process.env.DB_HOST,
       password: process.env.DB_PASSWORD,
       port: Number(process.env.DB_PORT),
-      synchronize: process.env.NODE_ENV === 'developments',
+      synchronize: process.env.NODE_ENV === 'development',
       type: 'postgres',
       username: process.env.DB_USERNAME,
     }),
