@@ -76,11 +76,15 @@ export class AuthService {
     return user;
   }
 
-  deactivate(id: string) {
-    return { id };
+  async deactivate(id: string) {
+    const user = await this.updateUser(id, { isActive: false });
+    await this.usersRepository.save(user);
+    return user;
   }
 
-  reactivate(id: string) {
-    return { id };
+  async reactivate(id: string) {
+    const user = await this.updateUser(id, { isActive: true });
+    await this.usersRepository.save(user);
+    return user;
   }
 }
