@@ -1,13 +1,13 @@
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
-import { compareSync, hashSync } from 'bcrypt';
 import {
   ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { LoginUserDto, RegisterUserDto, UpdateUserDto } from './dto';
+import { compareSync, hashSync } from 'bcrypt';
 import { User } from './entities/user.entity';
 import { isEmail } from 'class-validator';
 
