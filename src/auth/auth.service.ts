@@ -50,7 +50,13 @@ export class AuthService {
     const field = isEmail(identifier) ? 'email' : 'username';
     const user = await this.usersRepository.findOne({
       where: { [field]: identifier.toLowerCase() },
-      select: { id: true, username: true, email: true, password: true },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        password: true,
+        isActive: true,
+      },
     });
 
     if (!user || !compareSync(password, user.password))
@@ -58,8 +64,8 @@ export class AuthService {
     if (!user.isActive) throw new UnauthorizedException('User is inactive');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...userWithoutPassword } = user;
-    return { ...userWithoutPassword, token: this.getJwt({ id: user.id }) };
+    const { password: _, isActive: __, ...userData } = user;
+    return { ...userData, token: this.getJwt({ id: user.id }) };
   }
 
   async register(registerUserDto: RegisterUserDto) {
