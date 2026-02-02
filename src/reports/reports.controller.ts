@@ -57,7 +57,7 @@ export class ReportsController {
   updateShift(
     @Param('reportId', ReportByIdPipe) report: Report,
     @Param('shiftId', ShiftByIdPipe) shift: Shift,
-    updateShiftDto: UpdateShiftDto,
+    @Body() updateShiftDto: UpdateShiftDto,
   ) {
     return this.reportsService.updateShift(report, shift, updateShiftDto);
   }
@@ -74,7 +74,7 @@ export class ReportsController {
   addLunch(
     @Param('reportId', ReportByIdPipe) report: Report,
     @Param('shiftId', ShiftByIdPipe) shift: Shift,
-    addLunchDto: AddLunchDto,
+    @Body() addLunchDto: AddLunchDto,
   ) {
     return this.reportsService.addLunch(report, shift, addLunchDto);
   }
@@ -83,7 +83,7 @@ export class ReportsController {
   updateLunch(
     @Param('reportId', ReportByIdPipe) report: Report,
     @Param('shiftId', ShiftByIdPipe) shift: Shift,
-    updateLunchDto: UpdateLunchDto,
+    @Body() updateLunchDto: UpdateLunchDto,
   ) {
     return this.reportsService.updateLunch(report, shift, updateLunchDto);
   }
