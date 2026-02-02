@@ -1,28 +1,90 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/entities/user.entity';
 import { GetUser } from '../common/decorators';
-import { CreateReportDto, StartShiftDto } from './dto';
-import { Report } from './entities';
-import { ReportByIdPipe } from './pipes/report-by-id.pipe';
+import {
+  AddLunchDto,
+  AddShiftDto,
+  CreateReportDto,
+  UpdateLunchDto,
+  UpdateReportDto,
+  UpdateShiftDto,
+} from './dto';
+import { Report, Shift } from './entities';
+import { ReportByIdPipe, ShiftByIdPipe } from './pipes';
 import { ReportsService } from './reports.service';
 
 @Controller('reports')
+@UseGuards(AuthGuard())
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
   create(@GetUser() user: User, @Body() createReportDto: CreateReportDto) {
     return this.reportsService.create(user, createReportDto);
   }
 
-  @Post(':reportId')
-  @UseGuards(AuthGuard())
-  startShift(
+  @Patch(':reportId')
+  update(
     @Param('reportId', ReportByIdPipe) report: Report,
-    @Body() startShiftDto: StartShiftDto,
+    @Body() updateReportDto: UpdateReportDto,
   ) {
-    return this.reportsService.startShift(report, startShiftDto);
+    return this.reportsService.update(report, updateReportDto);
+  }
+
+  @Delete(':reportId')
+  close(@Param('reportId', ReportByIdPipe) report: Report) {
+    return this.reportsService.close(report);
+  }
+
+  @Post(':reportId/shifts')
+  addShift(
+    @Param('reportId', ReportByIdPipe) report: Report,
+    @Body() addShiftDto: AddShiftDto,
+  ) {
+    return this.reportsService.addShift(report, addShiftDto);
+  }
+
+  @Patch(':reportId/shifts/:shiftId')
+  updateShift(
+    @Param('reportId', ReportByIdPipe) report: Report,
+    @Param('shiftId', ShiftByIdPipe) shift: Shift,
+    updateShiftDto: UpdateShiftDto,
+  ) {
+    return this.reportsService.updateShift(report, shift, updateShiftDto);
+  }
+
+  @Delete(':reportId/shifts/:shiftId')
+  removeShift(
+    @Param('reportId', ReportByIdPipe) report: Report,
+    @Param('shiftId', ShiftByIdPipe) shift: Shift,
+  ) {
+    return this.reportsService.removeShift(report, shift);
+  }
+
+  @Post(':reportId/shifts/:shiftId/lunch')
+  addLunch(
+    @Param('reportId', ReportByIdPipe) report: Report,
+    @Param('shiftId', ShiftByIdPipe) shift: Shift,
+    addLunchDto: AddLunchDto,
+  ) {
+    return this.reportsService.addLunch(report, shift, addLunchDto);
+  }
+
+  @Patch(':reportId/shifts/:shiftId/lunch')
+  updateLunch(
+    @Param('reportId', ReportByIdPipe) report: Report,
+    @Param('shiftId', ShiftByIdPipe) shift: Shift,
+    updateLunchDto: UpdateLunchDto,
+  ) {
+    return this.reportsService.updateLunch(report, shift, updateLunchDto);
   }
 }

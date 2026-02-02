@@ -1,15 +1,15 @@
 import { IsDateString, ValidateIf } from 'class-validator';
 
-export class StartShiftDto {
+export class AddShiftDto {
   @IsDateString()
   endDate: Date;
 
   @IsDateString()
-  @ValidateIf((x: StartShiftDto) => x.lunchStart !== undefined)
+  @ValidateIf((x: AddShiftDto) => x.lunchStart !== undefined)
   lunchEnd?: Date;
 
   @IsDateString()
-  @ValidateIf((x: StartShiftDto) => x.lunchEnd !== undefined)
+  @ValidateIf((x: AddShiftDto) => x.lunchEnd !== undefined)
   lunchStart?: Date;
 
   @IsDateString()
