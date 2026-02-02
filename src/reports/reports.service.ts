@@ -29,6 +29,11 @@ export class ReportsService {
 
   async addShift(report: Report, addShiftDto: AddShiftDto) {
     return this.dataSource.manager.transaction(async (manager) => {
+      // if (!report.shifts.at(-1)!.endDate)
+      //   throw new BadRequestException(
+      //     'Cannot add new shift to report with an open shift',
+      //   );
+
       const shift = manager.create(Shift, addShiftDto);
       report.shifts = [...report.shifts, shift];
 
