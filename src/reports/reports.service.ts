@@ -9,56 +9,33 @@ export class ReportsService {
   constructor(private readonly dataSource: DataSource) {}
 
   async create(user: User, createReportDto: CreateReportDto) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const count = await queryRunner.manager.count(Report, {
-        where: { user },
-      });
+    return this.dataSource.manager.transaction(async (manager) => {
+      const count = await manager.count(Report, { where: { user } });
       const number = count + 1;
 
-      const report = queryRunner.manager.create(Report, {
+      const report = manager.create(Report, {
         number,
         user,
         ...createReportDto,
       });
-      await queryRunner.manager.save(report);
+      await manager.save(report);
 
-      const shift = queryRunner.manager.create(Shift, {
-        report,
-        ...createReportDto,
-      });
-      await queryRunner.manager.save(shift);
+      const shift = manager.create(Shift, { report, ...createReportDto });
+      await manager.save(shift);
 
-      await queryRunner.commitTransaction();
       return report;
-    } catch {
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   async addShift(report: Report, addShiftDto: AddShiftDto) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const shift = queryRunner.manager.create(Shift, addShiftDto);
+    return this.dataSource.manager.transaction(async (manager) => {
+      const shift = manager.create(Shift, addShiftDto);
       report.shifts = [...report.shifts, shift];
 
-      await queryRunner.manager.save(report);
-      await queryRunner.manager.save(shift);
+      await manager.save(report);
+      await manager.save(shift);
 
-      await queryRunner.commitTransaction();
       return report;
-    } catch {
-      await queryRunner.rollbackTransaction();
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 }
