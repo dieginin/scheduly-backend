@@ -25,7 +25,7 @@ export class ReportsController {
     return this.reportsService.create(user, createReportDto);
   }
 
-  @Delete(':reportId')
+  @Patch(':reportId')
   close(@Param('reportId', ReportByIdPipe) report: Report) {
     return this.reportsService.close(report);
   }
