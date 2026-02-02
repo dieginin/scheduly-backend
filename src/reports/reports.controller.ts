@@ -2,7 +2,7 @@ import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/entities/user.entity';
 import { GetUser } from '../common/decorators';
-import { AddShiftDto, CreateReportDto } from './dto';
+import { CreateReportDto, StartShiftDto } from './dto';
 import { Report } from './entities';
 import { ReportByIdPipe } from './pipes/report-by-id.pipe';
 import { ReportsService } from './reports.service';
@@ -19,10 +19,10 @@ export class ReportsController {
 
   @Post(':reportId')
   @UseGuards(AuthGuard())
-  addShift(
+  startShift(
     @Param('reportId', ReportByIdPipe) report: Report,
-    @Body() addShiftDto: AddShiftDto,
+    @Body() startShiftDto: StartShiftDto,
   ) {
-    return this.reportsService.addShift(report, addShiftDto);
+    return this.reportsService.startShift(report, startShiftDto);
   }
 }
