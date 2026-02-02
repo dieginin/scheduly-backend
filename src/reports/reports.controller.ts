@@ -10,13 +10,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../auth/entities/user.entity';
 import { GetUser } from '../common/decorators';
-import {
-  AddLunchDto,
-  AddShiftDto,
-  CreateReportDto,
-  UpdateLunchDto,
-  UpdateShiftDto,
-} from './dto';
+import { AddShiftDto, CreateReportDto, UpdateShiftDto } from './dto';
 import { Report, Shift } from './entities';
 import { ReportByIdPipe, ShiftByIdPipe } from './pipes';
 import { ReportsService } from './reports.service';
@@ -59,23 +53,5 @@ export class ReportsController {
     @Param('shiftId', ShiftByIdPipe) shift: Shift,
   ) {
     return this.reportsService.removeShift(report, shift);
-  }
-
-  @Post(':reportId/shifts/:shiftId/lunch')
-  addLunch(
-    @Param('reportId', ReportByIdPipe) report: Report,
-    @Param('shiftId', ShiftByIdPipe) shift: Shift,
-    @Body() addLunchDto: AddLunchDto,
-  ) {
-    return this.reportsService.addLunch(report, shift, addLunchDto);
-  }
-
-  @Patch(':reportId/shifts/:shiftId/lunch')
-  updateLunch(
-    @Param('reportId', ReportByIdPipe) report: Report,
-    @Param('shiftId', ShiftByIdPipe) shift: Shift,
-    @Body() updateLunchDto: UpdateLunchDto,
-  ) {
-    return this.reportsService.updateLunch(report, shift, updateLunchDto);
   }
 }
