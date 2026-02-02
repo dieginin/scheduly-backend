@@ -8,7 +8,6 @@ import {
   UpdateLunchDto,
   UpdateShiftDto,
 } from './dto';
-import { UpdateReportDto } from './dto/update-report.dto';
 import { Report, Shift } from './entities';
 
 @Injectable()
@@ -30,12 +29,8 @@ export class ReportsService {
       const shift = manager.create(Shift, { report, ...createReportDto });
       await manager.save(shift);
 
-      return report;
+      return manager.findOne(Report, { where: { id: report.id } });
     });
-  }
-
-  update(report: Report, updateReportDto: UpdateReportDto) {
-    return { report, updateReportDto };
   }
 
   close(report: Report) {
@@ -49,18 +44,41 @@ export class ReportsService {
       //*     'Cannot add new shift to report with an open shift',
       //*   );
 
-      const shift = manager.create(Shift, addShiftDto);
-      report.shifts = [...report.shifts, shift];
-
-      await manager.save(report);
+      const shift = manager.create(Shift, { report, ...addShiftDto });
       await manager.save(shift);
 
-      return report;
+      return manager.findOne(Report, { where: { id: report.id } });
     });
   }
 
-  updateShift(report: Report, shift: Shift, updateShiftDto: UpdateShiftDto) {
-    return { shift, updateShiftDtp: updateShiftDto };
+  async updateShift(
+    report: Report,
+    shift: Shift,
+    updateShiftDto: UpdateShiftDto,
+  ) {
+    return this.dataSource.manager.transaction(async (manager) => {
+      manager.merge(Shift, shift, updateShiftDto);
+      await manager.save(shift);
+
+      if (updateShiftDto.startDate) {
+        const updatedReport = await manager.findOneOrFail(Report, {
+          where: { id: report.id },
+        });
+
+        const earliestDate = updatedReport.shifts.reduce(
+          (earliest, current) =>
+            current.startDate < earliest ? current.startDate : earliest,
+          updatedReport.shifts[0].startDate,
+        );
+
+        if (earliestDate.getTime() !== updatedReport.startDate.getTime()) {
+          updatedReport.startDate = earliestDate;
+          await manager.save(updatedReport);
+        }
+      }
+
+      return manager.findOne(Report, { where: { id: report.id } });
+    });
   }
 
   removeShift(report: Report, shift: Shift) {

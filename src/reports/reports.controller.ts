@@ -15,7 +15,6 @@ import {
   AddShiftDto,
   CreateReportDto,
   UpdateLunchDto,
-  UpdateReportDto,
   UpdateShiftDto,
 } from './dto';
 import { Report, Shift } from './entities';
@@ -30,14 +29,6 @@ export class ReportsController {
   @Post()
   create(@GetUser() user: User, @Body() createReportDto: CreateReportDto) {
     return this.reportsService.create(user, createReportDto);
-  }
-
-  @Patch(':reportId')
-  update(
-    @Param('reportId', ReportByIdPipe) report: Report,
-    @Body() updateReportDto: UpdateReportDto,
-  ) {
-    return this.reportsService.update(report, updateReportDto);
   }
 
   @Delete(':reportId')
