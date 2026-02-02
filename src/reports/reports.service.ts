@@ -32,7 +32,7 @@ export class ReportsService {
       });
       await manager.save(report);
 
-      return manager.findOne(Report, { where: { id: report.id } });
+      return manager.findOneBy(Report, { id: report.id });
     });
   }
 
