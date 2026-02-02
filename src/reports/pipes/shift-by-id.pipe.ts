@@ -11,9 +11,7 @@ export class ShiftByIdPipe implements PipeTransform<string, Promise<Shift>> {
   ) {}
 
   async transform(id: string): Promise<Shift> {
-    const shift = await this.shiftsRepository.findOne({
-      where: { id },
-    });
+    const shift = await this.shiftsRepository.findOneBy({ id });
     if (!shift) throw new NotFoundException(`Shift ${id} not found`);
 
     return shift;
