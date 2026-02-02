@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
 import { User } from '../../auth/entities/user.entity';
 import { Shift } from './shift.entity';
 
+@Index(['user', 'number'], { unique: true })
 @Entity('reports')
 export class Report {
   @PrimaryGeneratedColumn('uuid')
@@ -25,6 +27,9 @@ export class Report {
   @ManyToOne(() => User, (user) => user.reports, { onDelete: 'CASCADE' })
   user: User;
 
-  @OneToMany(() => Shift, (shift) => shift.report, { eager: true })
+  @OneToMany(() => Shift, (shift) => shift.report, {
+    cascade: true,
+    eager: true,
+  })
   shifts: Shift[];
 }

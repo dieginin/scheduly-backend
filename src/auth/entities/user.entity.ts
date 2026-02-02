@@ -31,7 +31,7 @@ export class User {
   @Column('text', { array: true, default: ['user'] })
   roles: string[];
 
-  @OneToMany(() => Report, (report) => report.user, { eager: true })
+  @OneToMany(() => Report, (report) => report.user)
   reports: Report[];
 
   @BeforeInsert()

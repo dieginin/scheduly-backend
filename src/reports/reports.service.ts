@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User } from '../auth/entities/user.entity';
-import { CreateReportDto } from './dto';
+import { AddShiftDto, CreateReportDto } from './dto';
 import { Report, Shift } from './entities';
 
 @Injectable()
@@ -30,6 +30,27 @@ export class ReportsService {
         report,
         ...createReportDto,
       });
+      await queryRunner.manager.save(shift);
+
+      await queryRunner.commitTransaction();
+      return report;
+    } catch {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async addShift(report: Report, addShiftDto: AddShiftDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const shift = queryRunner.manager.create(Shift, addShiftDto);
+      report.shifts = [...report.shifts, shift];
+
+      await queryRunner.manager.save(report);
       await queryRunner.manager.save(shift);
 
       await queryRunner.commitTransaction();
