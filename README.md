@@ -5,28 +5,10 @@
 # Scheduly API
 
 1. Clone project
-2. Install dependencies
-
-```
-yarn install
-```
-
-3. Rename the file `.env.example` to `.env`
-4. Change variables
-5. Up DB
+2. Rename the file `.env.example` to `.env`
+3. Change variables
+4. Start API
 
 ```
 docker-compose up -d
-```
-
-6. Up API
-
-```
-yarn start:dev
-```
-
-7. Run SEED to fill database
-
-```
-http://localhost:3000/api/seed
 ```
