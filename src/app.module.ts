@@ -17,6 +17,8 @@ import { ReportsModule } from './reports/reports.module';
       synchronize: process.env.NODE_ENV === 'development',
       type: 'postgres',
       username: process.env.DB_USERNAME,
+      migrationsRun: process.env.NODE_ENV !== 'development',
+      migrations: ['dist/migrations/*.js'],
     }),
     AuthModule,
     CommonModule,
