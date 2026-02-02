@@ -14,7 +14,7 @@ import { Report, Shift } from './entities';
 export class ReportsService {
   constructor(private readonly dataSource: DataSource) {}
 
-  async create(user: User, createReportDto: CreateReportDto) {
+  create(user: User, createReportDto: CreateReportDto) {
     return this.dataSource.manager.transaction(async (manager) => {
       const count = await manager.count(Report, { where: { user } });
       const number = count + 1;
@@ -37,7 +37,7 @@ export class ReportsService {
     return report;
   }
 
-  async addShift(report: Report, addShiftDto: AddShiftDto) {
+  addShift(report: Report, addShiftDto: AddShiftDto) {
     return this.dataSource.manager.transaction(async (manager) => {
       //* if (!report.shifts.at(-1)!.endDate)
       //*   throw new BadRequestException(
@@ -51,11 +51,7 @@ export class ReportsService {
     });
   }
 
-  async updateShift(
-    report: Report,
-    shift: Shift,
-    updateShiftDto: UpdateShiftDto,
-  ) {
+  updateShift(report: Report, shift: Shift, updateShiftDto: UpdateShiftDto) {
     return this.dataSource.manager.transaction(async (manager) => {
       manager.merge(Shift, shift, updateShiftDto);
       await manager.save(shift);
@@ -82,7 +78,10 @@ export class ReportsService {
   }
 
   removeShift(report: Report, shift: Shift) {
-    return shift;
+    return this.dataSource.manager.transaction(async (manager) => {
+      await manager.remove(Shift, shift);
+      return manager.findOne(Report, { where: { id: report.id } });
+    });
   }
 
   addLunch(report: Report, shift: Shift, addLunchDto: AddLunchDto) {
