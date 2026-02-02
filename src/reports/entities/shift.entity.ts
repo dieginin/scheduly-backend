@@ -6,16 +6,16 @@ export class Shift {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('date', { nullable: true })
+  @Column('timestamp', { nullable: true })
   endDate?: Date;
 
-  @Column('date', { nullable: true })
+  @Column('timestamp', { nullable: true })
   lunchEnd?: Date;
 
-  @Column('date', { nullable: true })
+  @Column('timestamp', { nullable: true })
   lunchStart?: Date;
 
-  @Column('date')
+  @Column('timestamp')
   startDate: Date;
 
   @ManyToOne(() => Report, (report) => report.shifts, { onDelete: 'CASCADE' })

@@ -18,10 +18,10 @@ export class Report {
   @Column('int')
   number: number;
 
-  @Column('date')
+  @Column('timestamp')
   startDate: Date;
 
-  @Column('date', { nullable: true })
+  @Column('timestamp', { nullable: true })
   endDate?: Date;
 
   @ManyToOne(() => User, (user) => user.reports, { onDelete: 'CASCADE' })
