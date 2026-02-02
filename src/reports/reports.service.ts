@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { User } from '../auth/entities/user.entity';
 import { AddShiftDto, CreateReportDto, UpdateShiftDto } from './dto';
@@ -36,16 +36,26 @@ export class ReportsService {
     });
   }
 
-  close(report: Report) {
+  async close(report: Report) {
+    if (report.shifts.find((shift) => !shift.endDate))
+      throw new BadRequestException('Cannot close report with open shifts');
+
+    report.endDate = report.shifts.reduce((latest, current) => {
+      return current.endDate && current.endDate > latest
+        ? current.endDate
+        : latest;
+    }, new Date());
+
+    await this.dataSource.manager.save(report);
     return report;
   }
 
   addShift(report: Report, addShiftDto: AddShiftDto) {
     return this.dataSource.manager.transaction(async (manager) => {
-      //* if (!report.shifts.at(-1)!.endDate)
-      //*   throw new BadRequestException(
-      //*     'Cannot add new shift to report with an open shift',
-      //*   );
+      if (report.shifts.find((shift) => !shift.endDate))
+        throw new BadRequestException(
+          'Cannot add new shift to report with an open shift',
+        );
 
       const shift = manager.create(Shift, { report, ...addShiftDto });
       report.shifts.push(shift);
