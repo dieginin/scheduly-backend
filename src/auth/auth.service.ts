@@ -68,7 +68,7 @@ export class AuthService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userData } = user;
-    return { ...userData, token: this.getJwt({ id: user.id }) };
+    return { user: userData, token: this.getJwt({ id: user.id }) };
   }
 
   async register(registerUserDto: RegisterUserDto) {
@@ -84,7 +84,7 @@ export class AuthService {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _, ...userWithoutPassword } = user;
-    return { ...userWithoutPassword, token: this.getJwt({ id: user.id }) };
+    return { user: userWithoutPassword, token: this.getJwt({ id: user.id }) };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
