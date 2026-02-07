@@ -41,7 +41,7 @@ export class AuthService {
   }
 
   checkToken(user: User) {
-    return { ...user, token: this.getJwt({ id: user.id }) };
+    return { user, token: this.getJwt({ id: user.id }) };
   }
 
   async login(loginUserDto: LoginUserDto) {
