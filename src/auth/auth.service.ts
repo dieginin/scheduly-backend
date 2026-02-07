@@ -52,19 +52,22 @@ export class AuthService {
       where: { [field]: identifier.toLowerCase() },
       select: {
         id: true,
-        username: true,
         email: true,
-        password: true,
+        fullName: true,
         isActive: true,
+        password: true,
+        roles: true,
+        username: true,
       },
     });
+    console.log(user);
 
     if (!user || !compareSync(password, user.password))
       throw new UnauthorizedException('Invalid credentials');
     if (!user.isActive) throw new UnauthorizedException('User is inactive');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, isActive: __, ...userData } = user;
+    const { password: _, ...userData } = user;
     return { ...userData, token: this.getJwt({ id: user.id }) };
   }
 
