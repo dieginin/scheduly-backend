@@ -1,0 +1,40 @@
+services:
+  backend:
+    build: .
+    container_name: backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: ${PORT}
+    image: scheduly-backend
+    restart: always
+    ports:
+      - ${PORT}:${PORT}
+
+  db:
+    container_name: database
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+    healthcheck:
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME} -d ${DB_NAME}']
+      timeout: 5s
+    image: postgres:alpine3.23
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql
+
+volumes:
+  postgres-data:
+    driver: local
