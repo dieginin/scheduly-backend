@@ -88,10 +88,16 @@ export class AuthService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const { email, username } = updateUserDto;
-    await this.checkUserExistence(email || '', username || '');
-
-    const user = await this.updateUser(id, updateUserDto);
+    let user: User;
+    if (updateUserDto.password) {
+      user = await this.updateUser(id, {
+        password: hashSync(updateUserDto.password, 10),
+      });
+    } else {
+      const { email, username } = updateUserDto;
+      await this.checkUserExistence(email || '', username || '');
+      user = await this.updateUser(id, updateUserDto);
+    }
 
     await this.usersRepository.save(user);
     return user;
